@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Rnd = UnityEngine.Random;
+using System.Collections;
 
 public class SimpleModuleScript : MonoBehaviour {
 
@@ -70,18 +71,18 @@ public class SimpleModuleScript : MonoBehaviour {
 					"Remember Simple"
 			});
 
-			module.OnActivate += delegate () { 
-				StagesTotes = info.GetSolvableModuleNames().Where(a => !ignoredModules.Contains(a)).ToList().Count;
-				if (StagesTotes > 0)
-				{
-					Log("Yes Stages");
-				}
-				else
-				{
-					Log("No Stages");
-					module.HandlePass();
-				}
-			};
+
+			StagesTotes = info.GetSolvableModuleNames().Where(a => !ignoredModules.Contains(a)).ToList().Count;
+			if (StagesTotes > 0)
+			{
+				Log("Yes Stages");
+			}
+			else
+			{
+				Log("No Stages");
+				module.HandlePass();
+			}
+			
 		}
 	}
 
@@ -97,20 +98,25 @@ public class SimpleModuleScript : MonoBehaviour {
 		{
 			Invoke ("TooMany", 0);
 		}
+
+		if (stageCur == StagesTotes) 
+		{
+			stageSub = StagesTotes;
+		}
 	}
 
 	void TooLittle()
 	{
 		module.HandleStrike ();
 		stageSub = stageCur + 1;
-		Debug.Log(string.Format("You didnt press the button! Submitted stage presses were {0}", stageSub));
+		Debug.LogFormat("[Remember Simple #{0}] You didnt press the button! Submitted stage presses were {1}", ModuleId, stageSub);
 	}
 
 	void TooMany()
 	{
 		module.HandleStrike ();
 		stageSub = stageCur + 1;
-		Debug.Log(string.Format("Too many times! Submitted stage presses were {0}", stageSub));
+		Debug.LogFormat("[Remember Simple #{0}] Too many times! Submitted stage presses were {1}", ModuleId, stageSub);
 	}
 
 	public void buttonPress(KMSelectable pressedButton)
@@ -135,8 +141,7 @@ public class SimpleModuleScript : MonoBehaviour {
 				Log ("Stage submitted input? Done!");
 				correct.Play ();
 
-				if (stageSub == StagesTotes + 1) 
-				{
+				if (stageSub == StagesTotes + 1) {
 					module.HandlePass ();
 					Log ("This button has fooled you long enough");
 				}
@@ -149,6 +154,20 @@ public class SimpleModuleScript : MonoBehaviour {
 
 	void Log(string message)
 	{
-		Debug.LogFormat("[Black Screens #{0}] {1}", ModuleId, message);
+		Debug.LogFormat("[Remember Simple #{0}] {1}", ModuleId, message);
 	}
+
+#pragma warning disable 414
+    private string TwitchHelpMessage = "!{0} press [presses the button]";
+#pragma warning restore 414
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+	    var pressMatch = Regex.Match(command, @"^press$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+	    if (pressMatch.Success) 
+	    {
+		    yield return null;
+		    button[0].OnInteract();
+	    }
+    }
 }
