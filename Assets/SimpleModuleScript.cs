@@ -16,11 +16,11 @@ public class SimpleModuleScript : MonoBehaviour {
 	public KMSelectable[] button;
 	private string[] ignoredModules;
 
-	public int stageSub = 1;
-	public int stageCur;
-	public int StagesTotes;
+	private int stageSub;
+	private int stageCur;
+	private int StagesTotes;
 
-	public bool _isSolved = false;
+	private bool _isSolved = false;
 
 	public AudioSource correct;
 

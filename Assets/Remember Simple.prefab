@@ -579,10 +579,6 @@ MonoBehaviour:
   module: {fileID: 114939369612169268}
   button:
   - {fileID: 114443431446701344}
-  stageSub: 1
-  stageCur: 0
-  StagesTotes: 0
-  _isSolved: 0
   correct: {fileID: 82108200541595540}
 --- !u!114 &114854041294293950
 MonoBehaviour:
